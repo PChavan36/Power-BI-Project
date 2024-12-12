@@ -1,0 +1,136 @@
+# DATABASE Creation 
+
+CREATE DATABASE Climate_Agriculture_db;
+USE climate_agriculture_db;
+
+CREATE TABLE Climate_Data
+(
+Climate_ID INT  PRIMARY KEY,
+Year YEAR,
+Country VARCHAR(50),
+Region varchar(50),
+Average_Temperature_C FLOAT,
+Total_Precipitation_mm FLOAT,
+CO2_Emissions_MT FLOAT,
+Extreme_Weather_Events INT,
+Soil_Health_index FLOAT
+);
+
+CREATE TABLE Agriculture_Data
+(
+Agri_ID INT  PRIMARY KEY,
+Year YEAR,
+Country VARCHAR(50),
+Region VARCHAR(50),
+Crop_Type VARCHAR(50),
+Crop_yield_mt_per_ha  FLOAT,
+Irrigation_access_Percent  FLOAT,
+Pesticide_use_kg_per_ha  INT,
+fertilizer_use_kg_per_ha  FLOAT,
+Economic_Impact_Million_USD DECIMAL,
+Adaptation_Strategies VARCHAR(200),
+constraint FOREIGN KEY Agriculture_Data(Agri_ID) 
+REFERENCES Climate_Data(Climate_ID)
+ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+SELECT * FROM agriculture_data;
+
+SELECT * FROM climate_data;
+
+# Analysis Queries
+USE climate_agriculture_db;
+
+# How Does Climate Change Impact Farming and Food Production?
+SELECT 
+CASE 
+	WHEN agriculture_data.Year BETWEEN 1990 AND 1994 THEN 1992
+    WHEN agriculture_data.Year BETWEEN 1994 AND 1999 THEN 1997
+    WHEN agriculture_data.Year BETWEEN 2000 AND 2004 THEN 2002
+    WHEN agriculture_data.Year BETWEEN 2005 AND 2009 THEN 2007
+    WHEN agriculture_data.Year BETWEEN 2010 AND 2014 THEN 2012
+    WHEN agriculture_data.Year BETWEEN 2015 AND 2019 THEN 2017
+    WHEN agriculture_data.Year BETWEEN 2020 AND 2024 THEN 2024
+END AS Year_range, 
+Round(AVG(Average_Temperature_C),2) as AVG_Temperature,
+Round(AVG(Crop_yield_mt_per_ha),2) as AVG_Crop_Yield,
+SUM(Extreme_Weather_Events) as Total_Weather_Events
+FROM
+agriculture_data JOIN climate_data 
+ON agriculture_data.Agri_ID = climate_data .Climate_ID
+GROUP BY agriculture_data.Year
+ORDER BY agriculture_data.Year DESC;
+
+# Which Crops Are Producing the Most or Least Over Time During Climate Change?
+SELECT
+CASE 
+	WHEN agriculture_data.Year BETWEEN 1990 AND 1994 THEN 1992
+    WHEN agriculture_data.Year BETWEEN 1994 AND 1999 THEN 1997
+    WHEN agriculture_data.Year BETWEEN 2000 AND 2004 THEN 2002
+    WHEN agriculture_data.Year BETWEEN 2005 AND 2009 THEN 2007
+    WHEN agriculture_data.Year BETWEEN 2010 AND 2014 THEN 2012
+    WHEN agriculture_data.Year BETWEEN 2015 AND 2019 THEN 2017
+    WHEN agriculture_data.Year BETWEEN 2020 AND 2024 THEN 2024
+END AS Year_range, 
+Crop_Type,
+ROUND(sum(Crop_yield_mt_per_ha),2) as Total_Yield
+FROM agriculture_data
+GROUP BY agriculture_data.Year,Crop_Type
+ORDER BY agriculture_data.Year DESC;
+
+# How Will Food Production Impact the Future?
+
+SELECT 
+CASE 
+	WHEN agriculture_data.Year BETWEEN 1990 AND 1999 THEN "1990s"
+    WHEN agriculture_data.Year BETWEEN 2000 AND 2009 THEN "2000s"
+    WHEN agriculture_data.Year BETWEEN 2010 AND 2019 THEN "2010s"
+    WHEN agriculture_data.Year BETWEEN 2020 AND 2024 THEN "2020s"
+END AS Year_range,  
+ROUND(AVG(Crop_yield_mt_per_ha),2) AS Avg_Crop_yield,
+ROUND(avg(Economic_Impact_Million_USD),2) AS Economic_Impact_USD
+FROM agriculture_data
+GROUP BY YEAR
+ORDER BY YEAR DESC;
+
+# Environmental Changes and Adaptations Impacting Crop Production
+SELECT Adaptation_Strategies,
+ROUND(AVG(Crop_yield_mt_per_ha),2) AS AVG_Crop_Yield,
+ROUND(AVG(Average_Temperature_C),2) AS Avg_Temperature, 
+ROUND(AVG(Total_Precipitation_mm),2) AS Avg_Precipitation, 
+ROUND(AVG(Soil_Health_Index),2) AS Avg_Soil_Health
+FROM 
+agriculture_data JOIN climate_data 
+ON agriculture_data.Agri_ID = climate_data.Climate_ID
+GROUP BY Adaptation_Strategies
+ORDER BY AVG_Crop_Yield;
+
+Select Crop_Type  ,Economic_Impact_Million_USD
+FROM agriculture_data
+ORDER BY Economic_Impact_Million_USD DESC
+LIMIT 7;
+
+select count(distinct Region) 
+from agriculture_data;
+
+select Year,sum(Total_Precipitation_mm)
+from climate_data
+group by year;
+
+SELECT 
+    Region, 
+    Year, 
+    Pesticide_use_kg_per_ha / fertilizer_use_kg_per_ha AS PFRatio
+FROM agriculture_data
+order by year desc;
+
+
+
+
+SELECT Country,Region, CONCAT(ROUND(avg(Crop_yield_mt_per_ha),2)," MT/Ha") AS AVG_Yield
+FROM agriculture_data
+Group by Region,country ;
+
+SELECT COUNTRY, SUM(Extreme_Weather_Events)
+FROM climate_data
+GROUP BY COUNTRY;
