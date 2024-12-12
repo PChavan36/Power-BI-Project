@@ -82,10 +82,13 @@ ORDER BY agriculture_data.Year DESC;
 
 SELECT 
 CASE 
-	WHEN agriculture_data.Year BETWEEN 1990 AND 1999 THEN "1990s"
-    WHEN agriculture_data.Year BETWEEN 2000 AND 2009 THEN "2000s"
-    WHEN agriculture_data.Year BETWEEN 2010 AND 2019 THEN "2010s"
-    WHEN agriculture_data.Year BETWEEN 2020 AND 2024 THEN "2020s"
+	WHEN agriculture_data.Year BETWEEN 1990 AND 1994 THEN 1992
+    WHEN agriculture_data.Year BETWEEN 1994 AND 1999 THEN 1997
+    WHEN agriculture_data.Year BETWEEN 2000 AND 2004 THEN 2002
+    WHEN agriculture_data.Year BETWEEN 2005 AND 2009 THEN 2007
+    WHEN agriculture_data.Year BETWEEN 2010 AND 2014 THEN 2012
+    WHEN agriculture_data.Year BETWEEN 2015 AND 2019 THEN 2017
+    WHEN agriculture_data.Year BETWEEN 2020 AND 2024 THEN 2024
 END AS Year_range,  
 ROUND(AVG(Crop_yield_mt_per_ha),2) AS Avg_Crop_yield,
 ROUND(avg(Economic_Impact_Million_USD),2) AS Economic_Impact_USD
