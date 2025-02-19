@@ -1,4 +1,4 @@
-# Power-BI-Project
+# Climate Change and Agriculture - Power BI 
 Climate Change and Agriculture
 The dashboard offers actionable insights into the interplay between climate change and agricultural performance, highlighting key metrics like precipitation, soil health, and crop yield trends. By enabling stakeholders to visualize economic impacts, extreme weather events, and future forecasts, this project facilitates data-driven decision-making for agricultural sustainability.
 
